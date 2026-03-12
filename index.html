@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>スキーレンタル予約</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #fff; color: #1a1a1a; }
+        .card { border: 2px solid #000; border-radius: 0; }
+        .card-header { background: #000; color: #fff; border-radius: 0; font-weight: bold; }
+        .btn-black { background: #000; color: #fff; border-radius: 0; width: 100%; padding: 12px; }
+        .form-control { border: 1px solid #000; border-radius: 0; }
+        .form-select { 
+            padding: 12px;
+            border: 2px solid #000;
+            border-radius: 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg border-bottom border-dark mb-5">
+        <div class="container py-3">
+            <a class="navbar-brand fw-bold" href="home.html">SNOWRENTAL</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="home.html">HOME</a>
+                <a class="nav-link" href="price.html">PRICE</a>
+                <a class="nav-link" href="index.html">RENTAL</a>
+                <a class="nav-link" href="delivery.html">DELIVERY</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5" style="max-width: 500px;">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">スキーレンタル予約</div>
+            <div class="card-body">
+                <form id="reservationForm">
+                    <div class="mb-3">
+                        <label class="form-label">予約日</label>
+                        <input type="date" id="date" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">お名前</label>
+                        <input type="text" id="name" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">レンタルアイテム</label>
+                        <select id="item" class="form-select" required>
+                            <option value="" selected disabled>レンタルアイテムを選択</option>
+
+                            <optgroup label="スノーボード">
+                                <option value="ボード3点フルセット" data-price="4500">3点フルセット (¥4,500)</option>
+                                <option value="ボード2点セット" data-price="3000">2点セット (¥3,000)</option>
+                                <option value="ボードウェア上下" data-price="2500">ウェア上下 (¥2,500)</option>
+                                <option value="ボードのみ" data-price="1980">ボードのみ (¥1,980)</option>
+                                <option value="ブーツのみ" data-price="2000">ブーツのみ (¥2,000)</option>
+                            </optgroup>
+
+                            <optgroup label="キッズ (小学生以下)">
+                                <option value="キッズ3点フルセット" data-price="3000">3点フルセット (¥3,000)</option>
+                                <option value="キッズ2点セット" data-price="2500">2点セット (¥2,500)</option>
+                                <option value="キッズウェア上下" data-price="1500">ウェア上下 (¥1,500)</option>
+                                <option value="キッズボードのみ" data-price="1980">ボードのみ (¥1,980)</option>
+                                <option value="キッズブーツのみ" data-price="1000">ブーツのみ (¥1,000)</option>
+                            </optgroup>
+
+                            <optgroup label="スキー">
+                                <option value="スキー4点セット" data-price="4500">4点セット (¥4,500)</option>
+                                <option value="スキー3点セット" data-price="3000">3点セット (¥3,000)</option>
+                                <option value="スキーウェア上下" data-price="2500">ウェア上下 (¥2,500)</option>
+                                <option value="スキー板のみ" data-price="1980">板のみ (¥1,980)</option>
+                                <option value="スキーブーツのみ" data-price="2000">ブーツのみ (¥2,000)</option>
+                                <option value="ストックのみ" data-price="1000">ストックのみ (¥1,000)</option>
+                            </optgroup>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="deliveryCheck" data-price="500">
+                            <label class="form-check-label" for="deliveryCheck">お届けサービスを利用する (+¥500)</label>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-dark text-end">
+                        合計金額: <span id="totalPrice" class="fs-4 fw-bold">¥0</span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6 mb-3">
+                            <label class="form-label">ブーツサイズ</label>
+                            <select id="bootSize" class="form-select">
+                                <option value="なし">なし</option>
+                                <option value="22.0cm">22.0cm</option>
+                                <option value="23.0cm">23.0cm</option>
+                                <option value="24.0cm">24.0cm</option>
+                                <option value="25.0cm">25.0cm</option>
+                                <option value="26.0cm">26.0cm</option>
+                                <option value="27.0cm">27.0cm</option>
+                                <option value="28.0cm">28.0cm</option>
+                            </select>
+                        </div>
+                        <div class="col-6 mb-3">
+                            <label class="form-label">ウェアサイズ</label>
+                            <select id="wearSize" class="form-select">
+                                <option value="なし">なし</option>
+                                <option value="S">S</option>
+                                <option value="M">M</option>
+                                <option value="L">L</option>
+                                <option value="XL">XL</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-black w-100">予約する</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        const API_URL = "https://w276lcl832.execute-api.ap-northeast-1.amazonaws.com/prod/";
+
+        // ページ読み込み時に「今日」より前の日付を選べないようにする
+        const today = new Date().toISOString().split('T')[0];
+        const dateInput = document.getElementById('date');
+        dateInput.setAttribute('min', today);
+        dateInput.value = today;
+
+        // 選択アイテムの金額マップ
+        const PRICE_MAP = {
+            'ボード3点フルセット': 4500, 'ボード2点セット': 3000, 'ボードウェア上下': 2500,
+            'ボードのみ': 1980, 'ブーツのみ': 2000,
+            'キッズ3点フルセット': 3000, 'キッズ2点セット': 2500, 'キッズウェア上下': 1500,
+            'キッズボードのみ': 1980, 'キッズブーツのみ': 1000,
+            'スキー4点セット': 4500, 'スキー3点セット': 3000, 'スキーウェア上下': 2500,
+            'スキー板のみ': 1980, 'スキーブーツのみ': 2000, 'ストックのみ': 1000
+        };
+
+        function calculateTotal() {
+            let total = 0;
+            const selectedValue = document.getElementById('item').value;
+            if (selectedValue && PRICE_MAP[selectedValue]) {
+                total += PRICE_MAP[selectedValue];
+            }
+            if (document.getElementById('deliveryCheck').checked) {
+                total += 500;
+            }
+            document.getElementById('totalPrice').innerText = '¥' + total.toLocaleString();
+            return total;
+        }
+
+        document.getElementById('item').addEventListener('change', calculateTotal);
+        document.getElementById('deliveryCheck').addEventListener('change', calculateTotal);
+        calculateTotal();
+
+        document.getElementById('reservationForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const item = document.getElementById('item').value;
+            const isDelivery = document.getElementById('deliveryCheck').checked;
+            const bootSize = document.getElementById('bootSize').value;
+            const wearSize = document.getElementById('wearSize').value;
+
+            if (!item) {
+                alert('レンタルアイテムを選択してください。');
+                return;
+            }
+
+            const BOOT_REQUIRED = ['ボード3点フルセット', 'ボード2点セット', 'ブーツのみ',
+                                   'キッズ3点フルセット', 'キッズ2点セット', 'キッズブーツのみ',
+                                   'スキー4点セット', 'スキー3点セット', 'スキーブーツのみ'];
+            const WEAR_REQUIRED = ['ボード3点フルセット', 'ボードウェア上下',
+                                   'キッズ3点フルセット', 'キッズウェア上下',
+                                   'スキー4点セット', 'スキーウェア上下'];
+
+            if (BOOT_REQUIRED.includes(item) && bootSize === 'なし') {
+                alert('ブーツサイズを選択してください。');
+                return;
+            }
+
+            if (WEAR_REQUIRED.includes(item) && wearSize === 'なし') {
+                alert('ウェアサイズを選択してください。');
+                return;
+            }
+            
+            const reservationData = {
+                date: document.getElementById('date').value,
+                name: document.getElementById('name').value,
+                item: item,
+                delivery: isDelivery ? '利用する' : '利用しない',
+                size: `ブーツ:${bootSize} / ウェア:${wearSize}`,
+                price: document.getElementById('totalPrice').innerText,
+                reservationId: Date.now().toString()
+            };
+
+            const res = await fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify(reservationData)
+            });
+
+            if (res.ok) {
+                alert("予約が完了しました！");
+                window.location.reload();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRICE | SNOWRENTAL</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #fff; color: #000; font-family: 'Helvetica Neue', Arial, sans-serif; }
+        .page-title { font-size: 2rem; font-weight: 900; letter-spacing: 0.1em; border-bottom: 3px solid #000; padding-bottom: 10px; margin-bottom: 40px; }
+        .category-block { margin-bottom: 50px; }
+        .category-label { display: inline-block; background: #000; color: #fff; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; padding: 3px 10px; margin-bottom: 8px; }
+        .category-title { font-size: 1.4rem; font-weight: 800; border-bottom: 2px solid #000; padding-bottom: 8px; margin-bottom: 20px; }
+        .sub-title { font-size: 0.8rem; font-weight: 700; color: #666; text-transform: uppercase; letter-spacing: 0.1em; margin: 20px 0 8px; border-left: 3px solid #ccc; padding-left: 8px; }
+        .price-table { width: 100%; border-collapse: collapse; }
+        .price-table tr { border-bottom: 1px solid #e0e0e0; }
+        .price-table tr:last-child { border-bottom: 2px solid #000; }
+        .price-table td { padding: 12px 6px; vertical-align: middle; }
+        .price-table td:last-child { text-align: right; font-weight: 700; white-space: nowrap; }
+        .price-tag { font-size: 1.1rem; }
+        .discount-badge { display: inline-block; background: #ff4d4d; color: #fff; font-size: 0.7rem; font-weight: 700; padding: 2px 6px; margin-left: 6px; vertical-align: middle; }
+        .promo-bar { background: #000; color: #fff; padding: 14px 20px; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+        .promo-bar .promo-name { font-weight: 700; font-size: 1rem; }
+        .promo-bar .promo-amount { color: #ff4d4d; font-size: 1.4rem; font-weight: 900; }
+        .promo-bar .promo-note { font-size: 0.72rem; color: #aaa; margin-top: 2px; }
+        .item-name { font-size: 0.95rem; }
+        .item-includes { font-size: 0.78rem; color: #666; margin-top: 2px; }
+        .accessory-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+        .accessory-grid .price-table tr { border-bottom: 1px solid #e0e0e0; }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg border-bottom border-dark mb-5">
+    <div class="container py-3">
+        <a class="navbar-brand fw-bold" href="home.html">SNOWRENTAL</a>
+        <div class="navbar-nav ms-auto">
+            <a class="nav-link" href="home.html">HOME</a>
+            <a class="nav-link active" href="price.html">PRICE</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container" style="max-width: 820px;">
+
+    <h1 class="page-title mt-4">PRICE LIST</h1>
+
+    <!-- 割引バナー -->
+    <div class="row g-2 mb-5">
+        <div class="col-md-6">
+            <div class="promo-bar">
+                <div>
+                    <div class="promo-name">学割</div>
+                    <div class="promo-note">※学生証提示／フルセット限定</div>
+                </div>
+                <div class="promo-amount">¥1,000 OFF</div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="promo-bar">
+                <div>
+                    <div class="promo-name">BIRTHDAY割</div>
+                    <div class="promo-note">※誕生日月の方／フルセット限定</div>
+                </div>
+                <div class="promo-amount">¥1,000 OFF</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- スノーボード（大人） -->
+    <div class="category-block">
+        <div class="category-label">SNOWBOARD</div>
+        <h2 class="category-title">スノーボード <span style="font-size:0.9rem; font-weight:400;">（大人）</span></h2>
+
+        <div class="sub-title">セット料金</div>
+        <table class="price-table">
+            <tr>
+                <td>
+                    <div class="item-name">3点フルセット</div>
+                    <div class="item-includes">ボード・ブーツ・ウェア上下</div>
+                </td>
+                <td>
+                    <span class="price-tag">¥4,500</span>
+                    <span class="discount-badge">学割/BD割 ¥3,500</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="item-name">2点セット</div>
+                    <div class="item-includes">ボード・ブーツ</div>
+                </td>
+                <td><span class="price-tag">¥3,000</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="item-name">ウェア上下</div>
+                    <div class="item-includes">上下セット</div>
+                </td>
+                <td><span class="price-tag">¥2,500</span></td>
+            </tr>
+        </table>
+
+        <div class="sub-title">単品料金</div>
+        <table class="price-table">
+            <tr>
+                <td><div class="item-name">ボードのみ</div></td>
+                <td><span class="price-tag">¥1,980</span></td>
+            </tr>
+            <tr>
+                <td><div class="item-name">ブーツのみ</div></td>
+                <td><span class="price-tag">¥2,000</span></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- スノーボード（キッズ） -->
+    <div class="category-block">
+        <div class="category-label">SNOWBOARD / KIDS</div>
+        <h2 class="category-title">スノーボード <span style="font-size:0.9rem; font-weight:400;">（キッズ・小学生以下）</span></h2>
+
+        <div class="sub-title">セット料金</div>
+        <table class="price-table">
+            <tr>
+                <td>
+                    <div class="item-name">3点フルセット</div>
+                    <div class="item-includes">ボード・ブーツ・ウェア上下</div>
+                </td>
+                <td>
+                    <span class="price-tag">¥3,000</span>
+                    <span class="discount-badge">BD割 ¥2,000</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="item-name">2点セット</div>
+                    <div class="item-includes">ボード・ブーツ</div>
+                </td>
+                <td><span class="price-tag">¥2,500</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="item-name">ウェア上下</div>
+                    <div class="item-includes">上下セット</div>
+                </td>
+                <td><span class="price-tag">¥1,500</span></td>
+            </tr>
+        </table>
+
+        <div class="sub-title">単品料金</div>
+        <table class="price-table">
+            <tr>
+                <td><div class="item-name">ボードのみ</div></td>
+                <td><span class="price-tag">¥1,980</span></td>
+            </tr>
+            <tr>
+                <td><div class="item-name">ブーツのみ</div></td>
+                <td><span class="price-tag">¥1,000</span></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- スキー（大人） -->
+    <div class="category-block">
+        <div class="category-label">SKI</div>
+        <h2 class="category-title">スキー <span style="font-size:0.9rem; font-weight:400;">（大人）</span></h2>
+
+        <div class="sub-title">セット料金</div>
+        <table class="price-table">
+            <tr>
+                <td>
+                    <div class="item-name">4点フルセット</div>
+                    <div class="item-includes">板・ブーツ・ウェア上下・ストック</div>
+                </td>
+                <td>
+                    <span class="price-tag">¥4,500</span>
+                    <span class="discount-badge">学割/BD割 ¥3,500</span>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="item-name">3点セット</div>
+                    <div class="item-includes">板・ブーツ・ストック</div>
+                </td>
+                <td><span class="price-tag">¥3,000</span></td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="item-name">ウェア上下</div>
+                    <div class="item-includes">上下セット</div>
+                </td>
+                <td><span class="price-tag">¥2,500</span></td>
+            </tr>
+        </table>
+
+        <div class="sub-title">単品料金</div>
+        <table class="price-table">
+            <tr>
+                <td><div class="item-name">板のみ</div></td>
+                <td><span class="price-tag">¥1,980</span></td>
+            </tr>
+            <tr>
+                <td><div class="item-name">ブーツのみ</div></td>
+                <td><span class="price-tag">¥2,000</span></td>
+            </tr>
+            <tr>
+                <td><div class="item-name">ストックのみ</div></td>
+                <td><span class="price-tag">¥1,000</span></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- アクセサリー -->
+    <div class="category-block">
+        <div class="category-label">ACCESSORIES</div>
+        <h2 class="category-title">アクセサリー・小物</h2>
+
+        <div class="sub-title">レンタル</div>
+        <table class="price-table">
+            <tr>
+                <td><div class="item-name">グローブ</div></td>
+                <td><span class="price-tag">¥500</span></td>
+            </tr>
+            <tr>
+                <td><div class="item-name">ゴーグル</div></td>
+                <td><span class="price-tag">¥1,000</span></td>
+            </tr>
+            <tr>
+                <td><div class="item-name">ニット帽</div></td>
+                <td><span class="price-tag">¥500</span></td>
+            </tr>
+            <tr>
+                <td><div class="item-name">ヘルメット</div></td>
+                <td><span class="price-tag">¥1,000</span></td>
+            </tr>
+            <tr>
+                <td><div class="item-name">そり</div></td>
+                <td><span class="price-tag">¥500</span></td>
+            </tr>
+        </table>
+
+        <div class="sub-title">販売</div>
+        <table class="price-table">
+            <tr>
+                <td><div class="item-name">ゴーグル</div></td>
+                <td><span class="price-tag">¥3,980</span></td>
+            </tr>
+            <tr>
+                <td><div class="item-name">サングラス</div></td>
+                <td><span class="price-tag">¥1,500</span></td>
+            </tr>
+            <tr>
+                <td><div class="item-name">グローブ</div></td>
+                <td><span class="price-tag">¥1,980</span></td>
+            </tr>
+            <tr>
+                <td><div class="item-name">スノーソックス</div></td>
+                <td><span class="price-tag">¥1,500</span></td>
+            </tr>
+            <tr>
+                <td><div class="item-name">ニット帽</div></td>
+                <td><span class="price-tag">¥1,500</span></td>
+            </tr>
+        </table>
+    </div>
+
+</div>
+
+<div class="container">
+    <div class="text-center my-5 p-4 border border-dark">
+        <h5 class="fw-bold mb-3">料金をご確認いただけましたか？</h5>
+        <p class="text-muted">ご予約は24時間WEBにて受付中です。</p>
+        <a href="index.html" class="btn btn-dark btn-lg px-5 py-3" style="border-radius: 0;">
+            予約ページへ進む
+        </a>
+    </div>
+</div>
+
+<footer class="container text-center py-5 border-top border-dark mt-5">
+    <p class="small text-muted">&copy; 2026 SNOWRENTAL</p>
+</footer>
+</body>
+</html>

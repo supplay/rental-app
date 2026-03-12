@@ -1,0 +1,58 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SnowRental - スノーレンタルショップ</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #fff; color: #1a1a1a; font-family: 'Helvetica Neue', Arial, sans-serif; }
+        .hero { padding: 100px 0; border-bottom: 2px solid #000; }
+        .nav-link { text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.9rem; }
+        .btn-black { background: #000; color: #fff; padding: 15px 40px; border-radius: 0; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg border-bottom border-dark mb-5">
+        <div class="container py-3">
+            <a class="navbar-brand fw-bold" href="home.html">SNOWRENTAL</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="home.html">HOME</a>
+                <a class="nav-link" href="price.html">PRICE</a>
+                <a class="nav-link" href="index.html">RENTAL</a>
+                <a class="nav-link" href="delivery.html">DELIVERY</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero text-center">
+        <h1 class="display-3 fw-bold">SNOWRENTAL</h1>
+        <p class="lead mt-4">最高のスノー体験を、手ぶらで。</p>
+        <div class="mt-5">
+            <a href="index.html" class="btn btn-black">予約する</a>
+            <a href="price.html" class="btn btn-outline-dark px-4 ms-2">料金表</a>
+        </div>
+    </header>
+
+    <footer class="text-center py-4">
+        <p class="text-muted small">
+            &copy; 2026 SnowRental Shop
+            <a href="#" onclick="openAdmin(event)" style="color:transparent; text-decoration:none; display:inline-block; width:10px;">.</a>
+        </p>
+    </footer>
+
+    <script>
+        function openAdmin(event) {
+            event.preventDefault();
+            const password = prompt("管理者パスワードを入力してください");
+            if (password && password.trim() === "snow910") {
+                window.location.href = "admin.html";
+                return;
+            }
+            alert("パスワードが違います。");
+        }
+    </script>
+
+</body>
+</html>

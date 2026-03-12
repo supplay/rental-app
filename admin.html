@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>管理者専用：予約一覧</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #fff; color: #1a1a1a; }
+        .table-dark { background-color: #000; color: #fff; }
+        .table { border: 2px solid #000; }
+        .table th, .table td { white-space: nowrap; }
+        .btn-danger { border-radius: 0; background: #ff4d4d; border: none; }
+        h2 { border-left: 5px solid #000; padding-left: 15px; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg border-bottom border-dark mb-5">
+        <div class="container py-3">
+            <a class="navbar-brand fw-bold" href="home.html">SNOWRENTAL</a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="home.html">HOME</a>
+                <a class="nav-link" href="price.html">PRICE</a>
+                <a class="nav-link" href="index.html">RENTAL</a>
+                <a class="nav-link" href="delivery.html">DELIVERY</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <h2 class="mb-4">予約管理システム</h2>
+        <div id="adminArea" style="display:none;">
+            <div class="table-responsive">
+                <table class="table table-striped table-hover mt-4">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>予約日</th>
+                            <th>お名前</th>
+                            <th>レンタル内容</th>
+                            <th>ブーツ</th>
+                            <th>ウェア</th>
+                            <th>お届け</th>
+                            <th>金額</th>
+                            <th>削除</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reservationList">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = "https://w276lcl832.execute-api.ap-northeast-1.amazonaws.com/prod/";
+
+        // 予約データをテーブルに展開する関数
+        function renderReservations(data) {
+            const list = document.getElementById('reservationList');
+            list.innerHTML = data.map(r => {
+                // サイズデータの分解 (例: "ブーツ:26.0cm / ウェア:M")
+                const sizeParts = (r.size || '').split(' / ');
+                const boot = sizeParts[0]?.replace('ブーツ:', '') || '';
+                const wear = sizeParts[1]?.replace('ウェア:', '') || '';
+
+                // お届けの〇×判定
+                const deliveryMark = (r.delivery === "利用する") ? "〇" : "×";
+
+                return `
+                <tr>
+                    <td>${r.date}</td>
+                    <td>${r.name}</td>
+                    <td>${r.item}</td>
+                    <td>${boot !== 'なし' ? boot : ''}</td>
+                    <td>${wear !== 'なし' ? wear : ''}</td>
+                    <td class="text-center fw-bold">${deliveryMark}</td>
+                    <td>${r.price}</td>
+                    <td class="text-center">
+                        <button class="btn btn-outline-danger btn-sm" onclick="deleteReservation('${r.reservationId}')">×</button>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        async function loadReservations() {
+            const res = await fetch(API_URL);
+            let data = await res.json();
+
+            // 日付で並び替え（昇順：古い順から新しい順へ）
+            data.sort((a, b) => new Date(a.date) - new Date(b.date));
+
+            renderReservations(data);
+        }
+
+        async function deleteReservation(id) {
+            if(!confirm("本当にキャンセルしますか？")) return;
+
+            const res = await fetch(API_URL, {
+                method: 'DELETE',
+                body: JSON.stringify({ reservationId: id })
+            });
+
+            if (res.ok) {
+                alert("予約を削除しました！");
+                loadReservations();
+            } else {
+                alert("削除に失敗しました。");
+            }
+        }
+
+        document.getElementById('adminArea').style.display = "block";
+        loadReservations();
+    </script>
+</body>
+</html>
