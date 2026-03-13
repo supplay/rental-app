@@ -17,6 +17,14 @@
             border-radius: 0;
             font-weight: bold;
         }
+        .item-group { border: 1px solid #000; padding: 12px; margin-bottom: 12px; }
+        .item-group-title { font-size: 0.85rem; font-weight: bold; letter-spacing: 0.08em; margin-bottom: 10px; }
+        .item-option { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid #ddd; }
+        .item-option:first-child { border-top: 0; padding-top: 0; }
+        .item-option:last-child { padding-bottom: 0; }
+        .item-option input { margin-top: 0; }
+        .item-option-label { display: flex; justify-content: space-between; width: 100%; gap: 12px; font-weight: normal; }
+        .form-text-note { color: #666; font-size: 0.85rem; }
         .frame-box {
             border: 2px solid #000;
             outline: 2px solid #000;
@@ -30,7 +38,7 @@
 
     <nav class="navbar navbar-expand-lg border-bottom border-dark mb-5">
         <div class="container py-3">
-            <a class="navbar-brand fw-bold" href="home.html">SNOWRENTAL</a>
+            <a class="navbar-brand fw-bold" href="home.html">SNOWBOARD RENTAL SHOP #910</a>
             <div class="navbar-nav ms-auto">
                 <a class="nav-link" href="home.html">HOME</a>
                 <a class="nav-link" href="price.html">PRICE</a>
@@ -42,7 +50,7 @@
 
     <div class="container mt-5 frame-box" style="max-width: 500px;">
         <div class="card shadow">
-            <div class="card-header bg-primary text-white">スキーレンタル予約</div>
+            <div class="card-header bg-primary text-white">スノーボードレンタル予約</div>
             <div class="card-body">
                 <form id="reservationForm">
                     <div class="mb-3">
@@ -57,34 +65,8 @@
 
                     <div class="mb-3">
                         <label class="form-label fw-bold">レンタルアイテム</label>
-                        <select id="item" class="form-select" required>
-                            <option value="" selected disabled>レンタルアイテムを選択</option>
-
-                            <optgroup label="スノーボード">
-                                <option value="ボード3点フルセット" data-price="4500">3点フルセット (¥4,500)</option>
-                                <option value="ボード2点セット" data-price="3000">2点セット (¥3,000)</option>
-                                <option value="ボードウェア上下" data-price="2500">ウェア上下 (¥2,500)</option>
-                                <option value="ボードのみ" data-price="1980">ボードのみ (¥1,980)</option>
-                                <option value="ブーツのみ" data-price="2000">ブーツのみ (¥2,000)</option>
-                            </optgroup>
-
-                            <optgroup label="キッズ (小学生以下)">
-                                <option value="キッズ3点フルセット" data-price="3000">3点フルセット (¥3,000)</option>
-                                <option value="キッズ2点セット" data-price="2500">2点セット (¥2,500)</option>
-                                <option value="キッズウェア上下" data-price="1500">ウェア上下 (¥1,500)</option>
-                                <option value="キッズボードのみ" data-price="1980">ボードのみ (¥1,980)</option>
-                                <option value="キッズブーツのみ" data-price="1000">ブーツのみ (¥1,000)</option>
-                            </optgroup>
-
-                            <optgroup label="スキー">
-                                <option value="スキー4点セット" data-price="4500">4点セット (¥4,500)</option>
-                                <option value="スキー3点セット" data-price="3000">3点セット (¥3,000)</option>
-                                <option value="スキーウェア上下" data-price="2500">ウェア上下 (¥2,500)</option>
-                                <option value="スキー板のみ" data-price="1980">板のみ (¥1,980)</option>
-                                <option value="スキーブーツのみ" data-price="2000">ブーツのみ (¥2,000)</option>
-                                <option value="ストックのみ" data-price="1000">ストックのみ (¥1,000)</option>
-                            </optgroup>
-                        </select>
+                        <div id="itemOptions"></div>
+                        <div class="form-text-note mt-2">必要なアイテムを複数選択できます。</div>
                     </div>
 
                     <div class="mb-3">
@@ -104,11 +86,17 @@
                             <select id="bootSize" class="form-select">
                                 <option value="なし">なし</option>
                                 <option value="22.0cm">22.0cm</option>
+                                <option value="22.5cm">22.5cm</option>
                                 <option value="23.0cm">23.0cm</option>
+                                <option value="23.5cm">23.5cm</option>
                                 <option value="24.0cm">24.0cm</option>
+                                <option value="24.5cm">24.5cm</option>
                                 <option value="25.0cm">25.0cm</option>
+                                <option value="25.5cm">25.5cm</option>
                                 <option value="26.0cm">26.0cm</option>
+                                <option value="26.5cm">26.5cm</option>
                                 <option value="27.0cm">27.0cm</option>
+                                <option value="27.5cm">27.5cm</option>
                                 <option value="28.0cm">28.0cm</option>
                             </select>
                         </div>
@@ -138,6 +126,40 @@
         dateInput.setAttribute('min', today);
         dateInput.value = today;
 
+        const ITEM_GROUPS = [
+            {
+                label: 'スノーボード',
+                items: [
+                    { value: 'ボード3点フルセット', price: 4500 },
+                    { value: 'ボード2点セット', price: 3000 },
+                    { value: 'ボードウェア上下', price: 2500 },
+                    { value: 'ボードのみ', price: 1980 },
+                    { value: 'ブーツのみ', price: 2000 },
+                ],
+            },
+            {
+                label: 'キッズ (小学生以下)',
+                items: [
+                    { value: 'キッズ3点フルセット', price: 3000 },
+                    { value: 'キッズ2点セット', price: 2500 },
+                    { value: 'キッズウェア上下', price: 1500 },
+                    { value: 'キッズボードのみ', price: 1980 },
+                    { value: 'キッズブーツのみ', price: 1000 },
+                ],
+            },
+            {
+                label: 'スキー',
+                items: [
+                    { value: 'スキー4点セット', price: 4500 },
+                    { value: 'スキー3点セット', price: 3000 },
+                    { value: 'スキーウェア上下', price: 2500 },
+                    { value: 'スキー板のみ', price: 1980 },
+                    { value: 'スキーブーツのみ', price: 2000 },
+                    { value: 'ストックのみ', price: 1000 },
+                ],
+            }
+        ];
+
         // 選択アイテムの金額マップ
         const PRICE_MAP = {
             'ボード3点フルセット': 4500, 'ボード2点セット': 3000, 'ボードウェア上下': 2500,
@@ -147,13 +169,41 @@
             'スキー4点セット': 4500, 'スキー3点セット': 3000, 'スキーウェア上下': 2500,
             'スキー板のみ': 1980, 'スキーブーツのみ': 2000, 'ストックのみ': 1000
         };
+        const BOOT_REQUIRED = ['ボード3点フルセット', 'ボード2点セット', 'ブーツのみ',
+                               'キッズ3点フルセット', 'キッズ2点セット', 'キッズブーツのみ',
+                               'スキー4点セット', 'スキー3点セット', 'スキーブーツのみ'];
+        const WEAR_REQUIRED = ['ボード3点フルセット', 'ボードウェア上下',
+                               'キッズ3点フルセット', 'キッズウェア上下',
+                               'スキー4点セット', 'スキーウェア上下'];
+
+        const itemOptions = document.getElementById('itemOptions');
+        itemOptions.innerHTML = ITEM_GROUPS.map((group) => `
+            <div class="item-group">
+                <div class="item-group-title">${group.label}</div>
+                ${group.items.map((item) => `
+                    <label class="item-option">
+                        <input type="checkbox" class="form-check-input rental-item-checkbox" value="${item.value}">
+                        <span class="item-option-label">
+                            <span>${item.value}</span>
+                            <span>¥${item.price.toLocaleString()}</span>
+                        </span>
+                    </label>
+                `).join('')}
+            </div>
+        `).join('');
+
+        function getSelectedItems() {
+            return Array.from(document.querySelectorAll('.rental-item-checkbox:checked')).map((checkbox) => checkbox.value);
+        }
 
         function calculateTotal() {
             let total = 0;
-            const selectedValue = document.getElementById('item').value;
-            if (selectedValue && PRICE_MAP[selectedValue]) {
-                total += PRICE_MAP[selectedValue];
-            }
+            const selectedItems = getSelectedItems();
+            selectedItems.forEach((selectedItem) => {
+                if (PRICE_MAP[selectedItem]) {
+                    total += PRICE_MAP[selectedItem];
+                }
+            });
             if (document.getElementById('deliveryCheck').checked) {
                 total += 500;
             }
@@ -161,49 +211,57 @@
             return total;
         }
 
-        document.getElementById('item').addEventListener('change', calculateTotal);
+        document.querySelectorAll('.rental-item-checkbox').forEach((checkbox) => {
+            checkbox.addEventListener('change', calculateTotal);
+        });
         document.getElementById('deliveryCheck').addEventListener('change', calculateTotal);
         calculateTotal();
 
         document.getElementById('reservationForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const item = document.getElementById('item').value;
+            const selectedItems = getSelectedItems();
             const isDelivery = document.getElementById('deliveryCheck').checked;
             const bootSize = document.getElementById('bootSize').value;
             const wearSize = document.getElementById('wearSize').value;
 
-            if (!item) {
+            if (!selectedItems.length) {
                 alert('レンタルアイテムを選択してください。');
                 return;
             }
 
-            const BOOT_REQUIRED = ['ボード3点フルセット', 'ボード2点セット', 'ブーツのみ',
-                                   'キッズ3点フルセット', 'キッズ2点セット', 'キッズブーツのみ',
-                                   'スキー4点セット', 'スキー3点セット', 'スキーブーツのみ'];
-            const WEAR_REQUIRED = ['ボード3点フルセット', 'ボードウェア上下',
-                                   'キッズ3点フルセット', 'キッズウェア上下',
-                                   'スキー4点セット', 'スキーウェア上下'];
+            if (selectedItems.length !== new Set(selectedItems).size) {
+                alert('同じアイテムは重複して選択できません。');
+                return;
+            }
 
-            if (BOOT_REQUIRED.includes(item) && bootSize === 'なし') {
+            if (selectedItems.some((selectedItem) => BOOT_REQUIRED.includes(selectedItem)) && bootSize === 'なし') {
                 alert('ブーツサイズを選択してください。');
                 return;
             }
 
-            if (WEAR_REQUIRED.includes(item) && wearSize === 'なし') {
+            if (selectedItems.some((selectedItem) => WEAR_REQUIRED.includes(selectedItem)) && wearSize === 'なし') {
                 alert('ウェアサイズを選択してください。');
                 return;
             }
             
+            const reservationId = Date.now().toString();
+            const totalPrice = document.getElementById('totalPrice').innerText;
             const reservationData = {
                 date: document.getElementById('date').value,
                 name: document.getElementById('name').value,
-                item: item,
+                item: selectedItems.join(' / '),
                 delivery: isDelivery ? '利用する' : '利用しない',
                 size: `ブーツ:${bootSize} / ウェア:${wearSize}`,
-                price: document.getElementById('totalPrice').innerText,
-                reservationId: Date.now().toString()
+                price: totalPrice,
+                totalPrice: totalPrice,
+                status: '未読',
+                reservationId: reservationId
             };
+
+            const reservations = JSON.parse(localStorage.getItem('reservations') || '[]');
+            reservations.push(reservationData);
+            localStorage.setItem('reservations', JSON.stringify(reservations));
 
             const res = await fetch(API_URL, {
                 method: 'POST',
@@ -213,7 +271,11 @@
             if (res.ok) {
                 alert("予約が完了しました！");
                 window.location.reload();
+                return;
             }
+
+            alert('ローカル保存で予約を記録しました（API送信は失敗しました）。');
+            window.location.reload();
         });
     </script>
 </body>

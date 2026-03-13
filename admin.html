@@ -8,9 +8,15 @@
         body { background-color: #fff; color: #1a1a1a; }
         .table-dark { background-color: #000; color: #fff; }
         .table { border: 2px solid #000; }
-        .table th, .table td { white-space: nowrap; }
+        .table th, .table td { white-space: nowrap; vertical-align: middle; }
         .btn-danger { border-radius: 0; background: #ff4d4d; border: none; }
         h2 { border-left: 5px solid #000; padding-left: 15px; }
+        .status-select { min-width: 110px; border-radius: 0; border: 1px solid #000; }
+        .size-delivery { white-space: normal; min-width: 160px; }
+        .table-warning { background-color: #fff3cd !important; }
+        .table-primary { background-color: #cfe2ff !important; }
+        .table-success { background-color: #d1e7dd !important; }
+        .table-success select { opacity: 0.6; }
         .frame-box {
             border: 2px solid #000;
             outline: 2px solid #000;
@@ -24,7 +30,7 @@
 
     <nav class="navbar navbar-expand-lg border-bottom border-dark mb-5">
         <div class="container py-3">
-            <a class="navbar-brand fw-bold" href="home.html">SNOWRENTAL</a>
+            <a class="navbar-brand fw-bold" href="home.html">SNOWBOARD RENTAL SHOP #910</a>
             <div class="navbar-nav ms-auto">
                 <a class="nav-link" href="home.html">HOME</a>
                 <a class="nav-link" href="price.html">PRICE</a>
@@ -35,7 +41,7 @@
     </nav>
 
     <div class="container mt-5 frame-box">
-        <h2 class="mb-4">予約管理システム</h2>
+        <h2 class="mb-4">SNOWBOARD RENTAL SHOP #910 - 予約管理システム</h2>
         <div id="adminArea" style="display:none;">
             <div class="table-responsive">
                 <table class="table table-striped table-hover mt-4">
@@ -43,11 +49,10 @@
                         <tr>
                             <th>予約日</th>
                             <th>お名前</th>
-                            <th>レンタル内容</th>
-                            <th>ブーツ</th>
-                            <th>ウェア</th>
-                            <th>お届け</th>
+                            <th>内容</th>
+                            <th>サイズ/お届け</th>
                             <th>金額</th>
+                            <th>ステータス</th>
                             <th>削除</th>
                         </tr>
                     </thead>
@@ -59,63 +64,179 @@
     </div>
 
     <script>
-        const API_URL = "https://w276lcl832.execute-api.ap-northeast-1.amazonaws.com/prod/";
+        const STATUS_OPTIONS = ['未読', '既読', '準備済', '貸出済', '返却済'];
+        const STATUS_STORAGE_KEY = 'reservationStatuses';
 
-        // 予約データをテーブルに展開する関数
-        function renderReservations(data) {
-            const list = document.getElementById('reservationList');
-            list.innerHTML = data.map(r => {
-                // サイズデータの分解 (例: "ブーツ:26.0cm / ウェア:M")
-                const sizeParts = (r.size || '').split(' / ');
-                const boot = sizeParts[0]?.replace('ブーツ:', '') || '';
-                const wear = sizeParts[1]?.replace('ウェア:', '') || '';
-
-                // お届けの〇×判定
-                const deliveryMark = (r.delivery === "利用する") ? "〇" : "×";
-
-                return `
-                <tr>
-                    <td>${r.date}</td>
-                    <td>${r.name}</td>
-                    <td>${r.item}</td>
-                    <td>${boot !== 'なし' ? boot : ''}</td>
-                    <td>${wear !== 'なし' ? wear : ''}</td>
-                    <td class="text-center fw-bold">${deliveryMark}</td>
-                    <td>${r.price}</td>
-                    <td class="text-center">
-                        <button class="btn btn-outline-danger btn-sm" onclick="deleteReservation('${r.reservationId}')">×</button>
-                    </td>
-                </tr>`;
-            }).join('');
+        function generateReservationId() {
+            return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
         }
 
-        async function loadReservations() {
-            const res = await fetch(API_URL);
-            let data = await res.json();
-
-            // 日付で並び替え（昇順：古い順から新しい順へ）
-            data.sort((a, b) => new Date(a.date) - new Date(b.date));
-
-            renderReservations(data);
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
         }
 
-        async function deleteReservation(id) {
-            if(!confirm("本当にキャンセルしますか？")) return;
+        // 1. データの読み込み
+        function getReservations() {
+            const data = localStorage.getItem('reservations');
+            return data ? JSON.parse(data) : [];
+        }
 
-            const res = await fetch(API_URL, {
-                method: 'DELETE',
-                body: JSON.stringify({ reservationId: id })
-            });
+        function saveReservations(reservations) {
+            localStorage.setItem('reservations', JSON.stringify(reservations));
+        }
 
-            if (res.ok) {
-                alert("予約を削除しました！");
-                loadReservations();
-            } else {
-                alert("削除に失敗しました。");
+        function getStatusMap() {
+            const data = localStorage.getItem(STATUS_STORAGE_KEY);
+            if (!data) {
+                return {};
+            }
+
+            try {
+                const parsed = JSON.parse(data);
+                return parsed && typeof parsed === 'object' ? parsed : {};
+            } catch (error) {
+                return {};
             }
         }
 
-        document.getElementById('adminArea').style.display = "block";
+        function saveStatusMap(statusMap) {
+            localStorage.setItem(STATUS_STORAGE_KEY, JSON.stringify(statusMap));
+        }
+
+        function normalizeReservations(reservations) {
+            let hasChanges = false;
+            const currentStatusMap = getStatusMap();
+            const nextStatusMap = {};
+            const normalized = reservations.map(r => {
+                const reservationId = r.reservationId || generateReservationId();
+                const storedStatus = currentStatusMap[reservationId];
+                const fallbackStatus = STATUS_OPTIONS.includes(r.status) ? r.status : '未読';
+                const status = STATUS_OPTIONS.includes(storedStatus) ? storedStatus : fallbackStatus;
+                if (reservationId !== r.reservationId || status !== r.status) {
+                    hasChanges = true;
+                }
+
+                nextStatusMap[reservationId] = status;
+                return {
+                    ...r,
+                    reservationId,
+                    status,
+                };
+            });
+
+            if (hasChanges) {
+                saveReservations(normalized);
+            }
+            saveStatusMap(nextStatusMap);
+            return normalized;
+        }
+
+        // 2. ステータスを更新して保存する関数
+        function updateStatus(id, newStatus) {
+            if (!STATUS_OPTIONS.includes(newStatus)) {
+                return;
+            }
+
+            const reservations = normalizeReservations(getReservations()).map(r => {
+                if (r.reservationId === id) {
+                    return { ...r, status: newStatus };
+                }
+                return r;
+            });
+
+            const statusMap = getStatusMap();
+            statusMap[id] = newStatus;
+
+            saveReservations(reservations);
+            saveStatusMap(statusMap);
+            renderReservations(reservations);
+        }
+
+        function getStatusClass(status) {
+            switch(status) {
+                case '準備済': return 'table-warning';
+                case '貸出済': return 'table-primary';
+                case '返却済': return 'table-success';
+                default: return '';
+            }
+        }
+
+        // 3. テーブルの描画（ステータスに応じた色付け）
+        function renderReservations(data) {
+            const list = document.getElementById('reservationList');
+            list.innerHTML = data.map(r => {
+                const sizeParts = (r.size || '').split(' / ');
+                const boot = sizeParts[0]?.replace('ブーツ:', '') || '';
+                const wear = sizeParts[1]?.replace('ウェア:', '') || '';
+                const deliveryMark = (r.delivery === '利用する') ? '〇' : '×';
+                const status = r.status || '未読';
+                const statusClass = getStatusClass(status);
+                const sizeInfo = [
+                    `ブーツ: ${escapeHtml(boot !== 'なし' ? boot : '-')}`,
+                    `ウェア: ${escapeHtml(wear !== 'なし' ? wear : '-')}`,
+                    `お届け: ${deliveryMark}`,
+                ].join('<br>');
+                const statusOptions = STATUS_OPTIONS.map(option => `
+                    <option value="${option}" ${status === option ? 'selected' : ''}>${option}</option>
+                `).join('');
+
+                return `
+                <tr class="${statusClass}">
+                    <td>${escapeHtml(r.date || '')}</td>
+                    <td>${escapeHtml(r.name || '')}</td>
+                    <td>${escapeHtml(r.item || '')}</td>
+                    <td class="size-delivery">${sizeInfo}</td>
+                    <td>${escapeHtml(r.price || r.totalPrice || '')}</td>
+                    <td>
+                        <select class="form-select form-select-sm status-select" data-reservation-id="${escapeHtml(r.reservationId)}">
+                            ${statusOptions}
+                        </select>
+                    </td>
+                    <td class="text-center">
+                        <button class="btn btn-outline-danger btn-sm delete-reservation-btn" data-reservation-id="${escapeHtml(r.reservationId)}">×</button>
+                    </td>
+                </tr>`;
+            }).join('');
+
+            list.querySelectorAll('.status-select').forEach((selectEl) => {
+                selectEl.addEventListener('change', (event) => {
+                    const reservationId = event.target.getAttribute('data-reservation-id');
+                    updateStatus(reservationId, event.target.value);
+                });
+            });
+
+            list.querySelectorAll('.delete-reservation-btn').forEach((buttonEl) => {
+                buttonEl.addEventListener('click', (event) => {
+                    const reservationId = event.target.getAttribute('data-reservation-id');
+                    deleteReservation(reservationId);
+                });
+            });
+        }
+
+        function loadReservations() {
+            const data = normalizeReservations(getReservations());
+            data.sort((a, b) => new Date(a.date) - new Date(b.date));
+            renderReservations(data);
+        }
+
+        function deleteReservation(id) {
+            if (!confirm('本当にキャンセルしますか？')) return;
+
+            const reservations = getReservations().filter(r => r.reservationId !== id);
+            const statusMap = getStatusMap();
+            delete statusMap[id];
+            saveReservations(reservations);
+            saveStatusMap(statusMap);
+            renderReservations(reservations);
+            alert('予約を削除しました！');
+        }
+
+        document.getElementById('adminArea').style.display = 'block';
         loadReservations();
     </script>
 </body>
